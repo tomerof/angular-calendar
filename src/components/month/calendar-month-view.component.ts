@@ -342,6 +342,7 @@ export class CalendarMonthViewComponent
       excluded: this.excludeDays,
       weekendDays: this.weekendDays
     });
+
     this.emitBeforeViewRender();
   }
 

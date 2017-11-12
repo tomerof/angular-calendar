@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import 'hebcal/client/hebcal.js';
+declare const Hebcal;
+
 import {
   getMonthView,
   GetMonthViewArgs,
@@ -19,6 +22,12 @@ import {
 
 @Injectable()
 export class CalendarUtils {
+  public readonly hebcal = Hebcal;
+
+  getHebDate(date: Date) {
+    return new Hebcal.HDate(date);
+  }
+
   getMonthView(args: GetMonthViewArgs): MonthView {
     return getMonthView(args);
   }

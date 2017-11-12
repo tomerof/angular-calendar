@@ -3,9 +3,11 @@ import {
   Input,
   Output,
   EventEmitter,
-  TemplateRef
+  TemplateRef,
+  OnInit
 } from '@angular/core';
 import { MonthViewDay, CalendarEvent } from 'calendar-utils';
+import { CalendarUtils } from '../../providers/calendar-utils.provider';
 
 @Component({
   selector: 'mwl-calendar-month-cell',
@@ -13,6 +15,7 @@ import { MonthViewDay, CalendarEvent } from 'calendar-utils';
     <ng-template
       #defaultTemplate
       let-day="day"
+      let-hday="hday"
       let-openDay="openDay"
       let-locale="locale"
       let-tooltipPlacement="tooltipPlacement"
@@ -24,6 +27,7 @@ import { MonthViewDay, CalendarEvent } from 'calendar-utils';
       <div class="cal-cell-top">
         <span class="cal-day-badge" *ngIf="day.badgeTotal > 0">{{ day.badgeTotal }}</span>
         <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+        <span class="cal-day-hdate">{{hDateStr}}</span>
       </div>
       <div class="cal-events" *ngIf="day.events.length > 0">
         <div
@@ -49,6 +53,7 @@ import { MonthViewDay, CalendarEvent } from 'calendar-utils';
       [ngTemplateOutlet]="customTemplate || defaultTemplate"
       [ngTemplateOutletContext]="{
         day: day,
+        hday: hday,
         openDay: openDay,
         locale: locale,
         tooltipPlacement: tooltipPlacement,
@@ -73,7 +78,7 @@ import { MonthViewDay, CalendarEvent } from 'calendar-utils';
     '[style.backgroundColor]': 'day.backgroundColor'
   }
 })
-export class CalendarMonthCellComponent {
+export class CalendarMonthCellComponent implements OnInit {
   @Input() day: MonthViewDay;
 
   @Input() openDay: MonthViewDay;
@@ -96,6 +101,19 @@ export class CalendarMonthCellComponent {
   eventClicked: EventEmitter<{ event: CalendarEvent }> = new EventEmitter<{
     event: CalendarEvent;
   }>();
+
+  hday: any;
+
+  hDateStr: string;
+
+  constructor(private utils: CalendarUtils) {}
+
+  ngOnInit() {
+    this.hday = this.utils.hebcal.HDate(this.day.date);
+    this.hDateStr = `${this.utils.hebcal.gematriya(
+      this.hday.day
+    )} ${this.hday.getMonthName('h')}`;
+  }
 
   /**
    * @hidden
